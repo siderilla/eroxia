@@ -10,10 +10,16 @@ namespace eroxia.model
     {
         public Employee? Employee { get; set; }
         public string Address { get; set; }
+        public string? FiscalCodeEmployee { get; set; }
 
         public Client(string fiscalCode, string name, string surname, string address): base (fiscalCode, name, surname)
         {
             Address = address;
+        }
+
+        public override string? ToString()
+        {
+            return $"{Name} {Surname} ({FiscalCode}) - {Address}";
         }
 
     }

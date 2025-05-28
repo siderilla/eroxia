@@ -10,9 +10,14 @@ namespace eroxia
     internal interface ILogic
     {
 
-        public Task<List<Product>> GetAllProductsAsync();
+        public List<Product> GetAllProducts();
 
-        public Task<List<Employee>> GetAllEmployeesAsync();
+        public List<Employee> GetAllEmployees();
 
+        bool DeleteProduct(int productId);
+
+        bool InsertProduct(Product product);
+
+        public List<Client> GetAllClients();
     }
 }

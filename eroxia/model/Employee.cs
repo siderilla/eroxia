@@ -15,6 +15,9 @@ namespace eroxia.model
             Dob = dob;
         }
 
-
+        public override string? ToString()
+        {
+            return $"{Name} {Surname} ({FiscalCode}) - {Dob:dd/MM/yyyy}";
+        }
     }
 }

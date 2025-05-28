@@ -11,5 +11,12 @@ namespace eroxia
     {
         Task<List<Product>> GetAllProductsFromDB();
 
+        Task<List<Employee>> GetAllEmployeesFromDB();
+
+        Task<bool> DeleteProductFromDB(int productId);
+
+        Task<int> InsertProductToDB(Product product);
+
+        Task<List<Client>> GetAllClientsFromDB();
     }
 }
