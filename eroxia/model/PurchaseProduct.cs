@@ -8,16 +8,31 @@ namespace eroxia.model
 {
     internal class PurchaseProduct
     {
-        public Purchase Purchase { get; set; }
+        public int PurchaseId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public Product Product { get; set; }
 
-        public PurchaseProduct(Purchase purchase, int productId, int quantity)
+        public Purchase? Purchase { get; set; }
+        public Product? Product { get; set; }
+
+        public PurchaseProduct(int purchaseId, int productId, int quantity)
         {
-            Purchase = purchase;
+            PurchaseId = purchaseId;
             ProductId = productId;
             Quantity = quantity;
+        }
+
+        public override string ToString()
+        {
+            var purchaseInfo = Purchase != null
+                ? $"Cliente: {Purchase.Client.Name} {Purchase.Client.Surname}"
+                : $"PurchaseID: {PurchaseId}";
+
+            var productInfo = Product != null
+                ? $"{Product.Name} - {Quantity} pezzo/i - {Product.Price:C} cad."
+                : $"ProductID: {ProductId}, Quantità: {Quantity}";
+
+            return $"{purchaseInfo} ha acquistato {productInfo}";
         }
 
     }

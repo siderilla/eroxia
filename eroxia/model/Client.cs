@@ -12,15 +12,38 @@ namespace eroxia.model
         public string Address { get; set; }
         public string? FiscalCodeEmployee { get; set; }
 
-        public Client(string fiscalCode, string name, string surname, string address): base (fiscalCode, name, surname)
+        public Client(string fiscalCode, string name, string surname, string address, Employee? employee)
+            : base(fiscalCode, name, surname)
+        {
+            Address = address;
+            Employee = employee;
+            FiscalCodeEmployee = employee?.FiscalCode;
+        }
+
+
+        public Client(string fiscalCode, string name, string surname, string address)
+            : base(fiscalCode, name, surname)
         {
             Address = address;
         }
 
+        public Client(string fiscalCode, string name, string surname, string address, string? fiscalCodeEmployee)
+            : base(fiscalCode, name, surname)
+        {
+            Address = address;
+            FiscalCodeEmployee = fiscalCodeEmployee;
+        }
+
+
         public override string? ToString()
         {
-            return $"{Name} {Surname} ({FiscalCode}) - {Address}";
+            var employeeInfo = Employee != null
+                ? $" (Gestito da: {Employee.Name} {Employee.Surname})"
+                : " (Nessun employee associato)";
+
+            return $"{Name} {Surname} ({FiscalCode}) - {Address}{employeeInfo}";
         }
+
 
     }
 }

@@ -12,7 +12,7 @@ namespace eroxia
     internal class DBStorage: IStorage
     {
 
-        public static string PostGresConnectionString { get; } = "Host=localhost;Port=5432;Database=eroxia;Username=postgres;Password=superpippo";
+        public static string PostGresConnectionString { get; } = "Host=localhost;Port=5432;Database=eroxia_test;Username=postgres;Password=superpippo";
 
         public async Task<List<Product>> GetAllProductsFromDB()
         {
@@ -48,11 +48,17 @@ namespace eroxia
         public async Task<List<Employee>> GetAllEmployeesFromDB()
         {
             var dataSourceBuilder = new NpgsqlDataSourceBuilder(PostGresConnectionString);
+
             var dataSource = dataSourceBuilder.Build();
+
             var conn = await dataSource.OpenConnectionAsync();
+
             var query = new NpgsqlCommand("SELECT fiscal_code, name, surname, dob FROM employee", conn);
+
             var reader = query.ExecuteReader();
+
             var employees = new List<Employee>();
+
             while (reader.Read())
             {
                 var employee = new Employee(
@@ -139,7 +145,7 @@ namespace eroxia
             var dataSourceBuilder = new NpgsqlDataSourceBuilder(PostGresConnectionString);
             var dataSource = dataSourceBuilder.Build();
             var conn = dataSource.OpenConnectionAsync().Result;
-            var query = new NpgsqlCommand("SELECT fiscal_code, name, surname, address FROM client", conn);
+            var query = new NpgsqlCommand("SELECT fiscal_code, name, surname, address, fiscal_code_employee FROM client", conn);
             var reader = query.ExecuteReader();
             var clients = new List<Client>();
             while (reader.Read())
@@ -148,11 +154,32 @@ namespace eroxia
                     reader.GetString(0), // ClientId
                     reader.GetString(1), // Name
                     reader.GetString(2), // Surname
-                    reader.GetString(3) // Address
+                    reader.GetString(3), // Address
+                    reader.IsDBNull(4) ? null : reader.GetString(4) // fiscal_code_employee
                 );
                 clients.Add(client);
             }
             return Task.FromResult(clients);
+        }
+
+        public Task<List<PurchaseProduct>> GetAllPurchaseProductsFromDB()
+        {
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(PostGresConnectionString);
+            var dataSource = dataSourceBuilder.Build();
+            var conn = dataSource.OpenConnectionAsync().Result;
+            var query = new NpgsqlCommand("SELECT id_purchase, id_product, quantity FROM purchase_product", conn);
+            var reader = query.ExecuteReader();
+            var purchaseproducts = new List<PurchaseProduct>();
+            while (reader.Read())
+            {
+                var purchaseproduct = new PurchaseProduct(
+                    reader.GetInt32(0), // id_purchase
+                    reader.GetInt32(1), // is_product
+                    reader.GetInt32(2)  // quantity
+                );
+                purchaseproducts.Add(purchaseproduct); // Fixed type mismatch
+            }
+            return Task.FromResult(purchaseproducts);
         }
     }
 }

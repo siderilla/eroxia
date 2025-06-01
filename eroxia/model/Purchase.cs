@@ -17,7 +17,12 @@ namespace eroxia.model
 
         public decimal TotalPrice
         {
-            get { return PurchaseProducts.Sum(pp => pp.Product.Price * pp.Quantity); }
+            get
+            {
+                return PurchaseProducts
+                    .Where(pp => pp.Product != null) // Ensure Product is not null
+                    .Sum(pp => pp.Product!.Price * pp.Quantity); // Use null-forgiving operator
+            }
         }
 
         public Purchase(int purchaseId, Client client, DateTime creationDate)

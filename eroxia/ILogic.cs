@@ -19,5 +19,9 @@ namespace eroxia
         bool InsertProduct(Product product);
 
         public List<Client> GetAllClients();
+
+        public List<Purchase> GetAllPurchases();
+
+        public List<PurchaseProduct> GetAllPurchaseProducts();
     }
 }

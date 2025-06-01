@@ -18,5 +18,10 @@ namespace eroxia
         Task<int> InsertProductToDB(Product product);
 
         Task<List<Client>> GetAllClientsFromDB();
+
+        Task<List<Purchase>> GetAllPurchasesFromDB();
+
+        Task<List<PurchaseProduct>> GetAllPurchaseProductsFromDB();
+
     }
 }

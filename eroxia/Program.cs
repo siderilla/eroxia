@@ -7,7 +7,9 @@
             var storage = new DBStorage();
             var logic = new BusinessLogic(storage);
             var tui = new Tui(logic);
-            tui.Start();
+
+            // Use Task.Run to ensure asynchronous execution
+            await Task.Run(() => tui.Start());
         }
     }
 }

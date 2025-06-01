@@ -17,6 +17,7 @@ namespace eroxia
         private List<Employee>? Employees { get; set; }
         private List<Product>? Products { get; set; }
         private List<Client>? Clients { get; set; }
+        private List<PurchaseProduct> PurchaseProducts { get; set; }
 
 
         public BusinessLogic(IStorage storage)
@@ -44,7 +45,7 @@ namespace eroxia
         {
             if (Products == null)
             {
-                try 
+                try
                 {
                     Products = Storage.GetAllProductsFromDB().Result;
                 }
@@ -86,20 +87,69 @@ namespace eroxia
                 Clients = new List<Client>();
                 try
                 {
+                    // CARICA GLI EMPLOYEE PRIMA!
+                    if (Employees == null)
+                        Employees = Storage.GetAllEmployeesFromDB().Result;
+
                     var tempClients = Storage.GetAllClientsFromDB().Result;
-                    foreach (var client in tempClients)
+
+                    foreach (var temp in tempClients)
                     {
-                        client.Employee = Employees?.Find(e => e.FiscalCode == client.FiscalCodeEmployee);
+                        var employee = Employees?.Find(e => e.FiscalCode == temp.FiscalCodeEmployee);
+                        var client = new Client(temp.FiscalCode, temp.Name, temp.Surname, temp.Address, employee);
                         Clients.Add(client);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error fetching clients: {ex.Message}");
-                    Clients = new List<Client>(); // Return an empty list on error
+                    Console.WriteLine($"Error fetching clients: {ex}");
+                    Clients = new List<Client>();
                 }
             }
             return Clients;
         }
+
+        public List<Purchase> GetAllPurchases()
+        {
+            if (Purchases == null)
+            {
+                try
+                {
+                    Purchases = Storage.GetAllPurchasesFromDB().Result;
+                }
+            }
+        }
+
+        public List<PurchaseProduct> GetAllPurchaseProducts()
+        {
+            if (PurchaseProducts == null)
+            {
+                try
+                {
+                    // Step 1: carico dal DB
+                    PurchaseProducts = Storage.GetAllPurchaseProductsFromDB().Result;
+
+                    // Step 2: prendo gli oggetti già caricati
+                    var purchases = GetAllPurchases(); // questo carica anche i client
+                    var products = GetAllProducts();
+
+                    // Step 3: associo i riferimenti
+                    foreach (var pp in PurchaseProducts)
+                    {
+                        pp.Purchase = purchases.Find(p => p.PurchaseId == pp.PurchaseId);
+                        pp.Product = products.Find(p => p.ProductId == pp.ProductId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching PurchaseProducts: {ex.Message}");
+                    PurchaseProducts = new List<PurchaseProduct>();
+                }
+            }
+
+            return PurchaseProducts;
+        }
+
+
     }
 }

@@ -25,9 +25,10 @@ namespace eroxia
                 Console.WriteLine("1. View all products");
                 Console.WriteLine("2. View all employees");
                 Console.WriteLine("3. View all clients");
-                Console.WriteLine("4. Insert product");
-                Console.WriteLine("5. Delete product");
-                Console.WriteLine("6. Exit");
+                Console.WriteLine("4. View all purchases");
+                Console.WriteLine("5. Insert product");
+                Console.WriteLine("6. Delete product");
+                Console.WriteLine("7. Exit");
                 var input = Console.ReadLine();
                 switch (input)
                 {
@@ -41,33 +42,19 @@ namespace eroxia
                         ViewAllClients();
                         break;
                     case "4":
-                        InsertProduct();
+                        ViewAllPurchaseProducts();
                         break;
                     case "5":
-                        DeleteProduct();
+                        InsertProduct();
                         break;
                     case "6":
+                        DeleteProduct();
+                        break;
+                    case "7":
                         return;
                     default:
                         Console.WriteLine("Invalid option, please try again.");
                         break;
-                }
-            }
-        }
-
-        private void ViewAllEmployees()
-        {
-            var employees = Logic.GetAllEmployees();
-            if (employees == null || !employees.Any())
-            {
-                Console.WriteLine("No employees available.");
-            }
-            else
-            {
-                Console.WriteLine("Available Employees:");
-                foreach (var employee in employees)
-                {
-                    Console.WriteLine(employee.ToString());
                 }
             }
         }
@@ -89,6 +76,24 @@ namespace eroxia
             }
         }
 
+        private void ViewAllEmployees()
+        {
+            var employees = Logic.GetAllEmployees();
+            if (employees == null || !employees.Any())
+            {
+                Console.WriteLine("No employees available.");
+            }
+            else
+            {
+                Console.WriteLine("Available Employees:");
+                foreach (var employee in employees)
+                {
+                    Console.WriteLine(employee.ToString());
+                }
+            }
+        }
+
+
         private void ViewAllClients()
         {
             var clients = Logic.GetAllClients();
@@ -102,6 +107,23 @@ namespace eroxia
                 foreach (var client in clients)
                 {
                     Console.WriteLine(client.ToString());
+                }
+            }
+        }
+
+        private void ViewAllPurchaseProducts()
+        {
+            var purchaseproducts = Logic.GetAllPurchaseProducts();
+            if (purchaseproducts == null || !purchaseproducts.Any())
+            {
+                Console.WriteLine("No purchases available.");
+            }
+            else
+            {
+                Console.WriteLine("Available Purchases:");
+                foreach (var purchaseproduct in purchaseproducts)
+                {
+                    Console.WriteLine(purchaseproduct.ToString());
                 }
             }
         }
