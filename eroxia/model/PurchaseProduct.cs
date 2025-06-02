@@ -25,7 +25,7 @@ namespace eroxia.model
         public override string ToString()
         {
             var purchaseInfo = Purchase != null
-                ? $"Cliente: {Purchase.Client.Name} {Purchase.Client.Surname}"
+                ? $"Cliente: {Purchase?.Client?.Name} {Purchase?.Client?.Surname}"
                 : $"PurchaseID: {PurchaseId}";
 
             var productInfo = Product != null

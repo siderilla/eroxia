@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Npgsql; // Ensure you have the Npgsql package installed for PostgreSQL access
+using Npgsql;
+using System.Data; // Ensure you have the Npgsql package installed for PostgreSQL access
 
 namespace eroxia
 {
 
-    internal class DBStorage: IStorage
+    internal class DBStorage : IStorage
     {
 
         public static string PostGresConnectionString { get; } = "Host=localhost;Port=5432;Database=eroxia_test;Username=postgres;Password=superpippo";
@@ -180,6 +181,32 @@ namespace eroxia
                 purchaseproducts.Add(purchaseproduct); // Fixed type mismatch
             }
             return Task.FromResult(purchaseproducts);
+        }
+
+        public Task<List<Purchase>> GetAllPurchasesFromDB()
+        {
+            var dataSourceBuilder = new NpgsqlDataSourceBuilder(PostGresConnectionString);
+            var dataSource = dataSourceBuilder.Build();
+            var conn = dataSource.OpenConnectionAsync().Result;
+            var query = new NpgsqlCommand("SELECT id_purchase, fiscal_code_client, creation_date, expedition_date FROM purchase", conn);
+            var reader = query.ExecuteReader();
+            var purchaselist = new List<Purchase>();
+            while (reader.Read())
+            {
+                var purchase = new Purchase(
+                    reader.GetInt32(0),
+                    reader.GetDateTime(2)
+
+                );
+                purchase.FiscalCodeClient = reader.GetString(1);
+                if (!reader.IsDBNull(3))
+                {
+                    purchase.ExpeditionDate = reader.GetDateTime(3);
+                }
+
+                purchaselist.Add(purchase);
+            }
+            return Task.FromResult(purchaselist);
         }
     }
 }

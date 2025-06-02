@@ -36,7 +36,7 @@ namespace eroxia.model
 
         public override string? ToString()
         {
-            return $"{ProductId} - {Name} ({ProductId}) - {Manufacturer} - {Price:C}";
+            return $"{Name} ({ProductId}) - {Manufacturer} - {Price:C}";
         }
     }
 }

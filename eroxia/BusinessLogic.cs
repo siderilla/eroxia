@@ -9,21 +9,17 @@ using System.Threading.Tasks;
 
 namespace eroxia
 {
-    internal class BusinessLogic : ILogic
+    internal class BusinessLogic(IStorage storage) : ILogic
     {
-        private IStorage Storage { get; set; }
+        private IStorage Storage { get; set; } = storage;
 
 
         private List<Employee>? Employees { get; set; }
         private List<Product>? Products { get; set; }
         private List<Client>? Clients { get; set; }
-        private List<PurchaseProduct> PurchaseProducts { get; set; }
+        private List<Purchase>? Purchases { get; set; }
+        private List<PurchaseProduct>? PurchaseProducts { get; set; }
 
-
-        public BusinessLogic(IStorage storage)
-        {
-            Storage = storage;
-        }
         public List<Employee> GetAllEmployees()
         {
             if (Employees == null)
@@ -116,9 +112,29 @@ namespace eroxia
                 try
                 {
                     Purchases = Storage.GetAllPurchasesFromDB().Result;
+
+                    var clients = GetAllClients();
+
+                    foreach (var purchase in Purchases)
+                    {
+                        var client = clients.Find(c => c.FiscalCode == purchase.FiscalCodeClient);
+                        if (client != null)
+                        {
+                            purchase.Client = client;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error fetching purchases: {ex.Message}");
+                    Purchases = new List<Purchase>();
                 }
             }
+
+            return Purchases;
         }
+
+
 
         public List<PurchaseProduct> GetAllPurchaseProducts()
         {

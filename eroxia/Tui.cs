@@ -28,7 +28,9 @@ namespace eroxia
                 Console.WriteLine("4. View all purchases");
                 Console.WriteLine("5. Insert product");
                 Console.WriteLine("6. Delete product");
-                Console.WriteLine("7. Exit");
+                Console.WriteLine("7. Employee with higher profits");
+                Console.WriteLine("8. Most selled product");
+                Console.WriteLine("9. Exit");
                 var input = Console.ReadLine();
                 switch (input)
                 {
@@ -51,6 +53,12 @@ namespace eroxia
                         DeleteProduct();
                         break;
                     case "7":
+                        EmployeeWithHigherProfits();
+                        break;
+                    case "8":
+                        MostSelledProduct();
+                        break;
+                    case "9":
                         return;
                     default:
                         Console.WriteLine("Invalid option, please try again.");
@@ -150,7 +158,8 @@ namespace eroxia
                 };
                 // Assuming Logic has a method to insert a product
                 var success = Logic.InsertProduct(product);
-                if (success) {
+                if (success)
+                {
                     Console.WriteLine($"Product '{name}' with price {price} inserted successfully.");
                 }
                 else
@@ -185,5 +194,53 @@ namespace eroxia
                 Console.WriteLine("Invalid product ID. Please try again.");
             }
         }
+
+        private void MostSelledProduct()
+        {
+            var mostSelledProduct = Logic.GetAllPurchaseProducts()
+                .GroupBy(pp => pp.ProductId)
+                .OrderByDescending(g => g.Count())
+                .FirstOrDefault()?.Key;
+            if (mostSelledProduct.HasValue)
+            {
+                var product = Logic.GetAllProducts().FirstOrDefault(p => p.ProductId == mostSelledProduct.Value);
+                if (product != null)
+                {
+                    Console.WriteLine($"Most Selled Product: {product.Name} with ID {product.ProductId}");
+                }
+                else
+                {
+                    Console.WriteLine("Most Selled Product not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No products sold yet.");
+            }
+        }
+
+        private void EmployeeWithHigherProfits()
+        {
+            var employeeProfits = Logic.GetAllEmployees()
+                .Select(e => new
+                {
+                    Employee = e,
+                    TotalProfit = Logic.GetAllPurchaseProducts()
+                        .Where(pp => pp.Purchase?.Client?.Employee?.FiscalCode == e.FiscalCode)
+                        .Sum(pp => pp.Product?.Price * pp.Quantity ?? 0)
+                })
+                .OrderByDescending(ep => ep.TotalProfit)
+                .FirstOrDefault();
+
+            if (employeeProfits != null && employeeProfits.Employee != null)
+            {
+                Console.WriteLine($"Employee with higher profits: {employeeProfits.Employee.Name} {employeeProfits.Employee.Surname} with total profit: {employeeProfits.TotalProfit}");
+            }
+            else
+            {
+                Console.WriteLine("No employee profits found.");
+            }
+        }
+
     }
 }

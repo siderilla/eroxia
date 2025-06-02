@@ -9,7 +9,6 @@ namespace eroxia
 {
     internal interface ILogic
     {
-
         public List<Product> GetAllProducts();
 
         public List<Employee> GetAllEmployees();
